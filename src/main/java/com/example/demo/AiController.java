@@ -22,8 +22,9 @@ public class AiController {
 	}
 
 	@PostMapping("/users")
-	public User newUser(@RequestBody User user) {
-		return backendService.saveUser(user);
+	public ResponseEntity<User> newUser(@RequestBody User user) {
+		User savedUser = backendService.saveUser(user);
+		return ResponseEntity.ok(savedUser);
 	}
 
 	@GetMapping("/users")
