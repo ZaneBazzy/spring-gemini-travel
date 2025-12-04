@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class BackendService {
 
 	private final VertexAiGeminiChatModel chatModel;
+	private final UserRepository userRepository;
 
 	private static final String SYSTEM_PROMPT = """
 			You are a friendly and knowledgeable personal travel agent.
@@ -23,8 +24,9 @@ public class BackendService {
 			HTML string that can be inserted into div tag as innerHTML value.
 			""";
 
-	public BackendService(VertexAiGeminiChatModel chatModel) {
+	public BackendService(VertexAiGeminiChatModel chatModel, UserRepository userRepository) {
 		this.chatModel = chatModel;
+		this.userRepository = userRepository;
 	}
 
 	public String getAiResponse(String userMessage) {
@@ -36,5 +38,17 @@ public class BackendService {
 		ChatResponse response = chatModel.call(new Prompt(messages));
 
 		return response.getResult().getOutput().getText();
+	}
+
+	public User saveUser(User user) {
+		return userRepository.save(user);
+	}
+
+	public Iterable<User> getUsers() {
+		return userRepository.findAll();
+	}
+
+	public java.util.Optional<User> getUserById(Long id) {
+		return userRepository.findById(id);
 	}
 }
