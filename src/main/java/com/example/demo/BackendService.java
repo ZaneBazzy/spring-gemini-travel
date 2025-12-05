@@ -2,6 +2,7 @@ package com.example.demo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -50,5 +51,22 @@ public class BackendService {
 
 	public java.util.Optional<User> getUserById(Long id) {
 		return userRepository.findById(id);
+	}
+
+	public Optional<User> findUserByUsername(String username) {
+		return userRepository.findByUsername(username);
+	}
+
+	public User loginOrRegisterUser(User user) {
+		Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
+		if (existingUser.isPresent()) {
+			if (existingUser.get().getPassword().equals(user.getPassword())) {
+				return existingUser.get();
+			} else {
+				throw new RuntimeException("Invalid password");
+			}
+		} else {
+			return userRepository.save(user);
+		}
 	}
 }

@@ -45,8 +45,8 @@
                 const user = await response.json();
 
                 userDetailsDiv.innerHTML = `
-                    <p><strong>First Name:</strong> ${user.firstName}</p>
-                    <p><strong>Last Name:</strong> ${user.lastName}</p>
+                    <p><strong>Username:</strong> ${user.username}</p>
+                    <p><strong>Password:</strong> ********</p>
                     <p><strong>ID:</strong> ${user.id}</p>
                 `;
             } catch (err) {
