@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Trips</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+        #trips-container {
+            margin-top: 2em;
+        }
+        .trip {
+            border: 1px solid #ccc;
+            padding: 1em;
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Future Travel Destinations</h1>
+    <a href="/">Home</a>
+
+    <form id="add-trip-form">
+        <h2>Add a new trip</h2>
+        <div>
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" name="destination" required>
+        </div>
+        <br>
+        <div>
+            <label for="notes">Notes:</label>
+            <textarea id="notes" name="notes"></textarea>
+        </div>
+        <br>
+        <button type="submit">Add Trip</button>
+    </form>
+
+    <div id="trips-container">
+        <h2>My Saved Trips</h2>
+        <div id="trips-list"></div>
+    </div>
+
+    <script>
+        document.getElementById('add-trip-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const destination = event.target.elements.destination.value;
+            const notes = event.target.elements.notes.value;
+
+            const response = await fetch('/trips', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ destination, notes })
+            });
+
+            if (response.ok) {
+                event.target.reset();
+                loadTrips();
+            }
+        });
+
+        async function loadTrips() {
+            const response = await fetch('/trips');
+            if (response.ok) {
+                const trips = await response.json();
+                const tripsList = document.getElementById('trips-list');
+                tripsList.innerHTML = '';
+                for (const trip of trips) {
+                    const tripElement = document.createElement('div');
+                    tripElement.className = 'trip';
+                    tripElement.innerHTML = `
+                        <h3>${trip.destination}</h3>
+                        <p>${trip.notes || ''}</p>
+                    `;
+                    tripsList.appendChild(tripElement);
+                }
+            }
+        }
+
+        loadTrips();
+    </script>
+</body>
+</html>

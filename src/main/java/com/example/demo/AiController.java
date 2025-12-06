@@ -54,6 +54,29 @@ public class AiController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/trips")
+    @ResponseBody
+    public ResponseEntity<Trip> newTrip(@RequestBody Trip trip, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(401).build(); // Unauthorized
+        }
+        trip.setUserId(userId);
+        Trip savedTrip = backendService.saveTrip(trip);
+        return ResponseEntity.ok(savedTrip);
+    }
+
+    @GetMapping("/trips")
+    @ResponseBody
+    public ResponseEntity<java.util.List<Trip>> getTrips(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(401).build(); // Unauthorized
+        }
+        java.util.List<Trip> trips = backendService.getTripsByUserId(userId);
+        return ResponseEntity.ok(trips);
+    }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();

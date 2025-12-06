@@ -17,6 +17,7 @@ public class BackendService {
 
 	private final VertexAiGeminiChatModel chatModel;
 	private final UserRepository userRepository;
+	private final TripRepository tripRepository;
 
 	private static final String SYSTEM_PROMPT = """
 			You are a friendly and knowledgeable personal travel agent.
@@ -25,9 +26,10 @@ public class BackendService {
 			HTML string that can be inserted into div tag as innerHTML value.
 			""";
 
-	public BackendService(VertexAiGeminiChatModel chatModel, UserRepository userRepository) {
+	public BackendService(VertexAiGeminiChatModel chatModel, UserRepository userRepository, TripRepository tripRepository) {
 		this.chatModel = chatModel;
 		this.userRepository = userRepository;
+		this.tripRepository = tripRepository;
 	}
 
 	public String getAiResponse(String userMessage) {
@@ -68,5 +70,13 @@ public class BackendService {
 		} else {
 			return userRepository.save(user);
 		}
+	}
+
+	public Trip saveTrip(Trip trip) {
+		return tripRepository.save(trip);
+	}
+
+	public List<Trip> getTripsByUserId(Long userId) {
+		return tripRepository.findByUserId(userId);
 	}
 }
